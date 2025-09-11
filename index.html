@@ -4,29 +4,60 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>sanandmv</title>
+    <meta name="description" content="sanandmv — software developer exploring web3, crypto, AI, Linux, Android, ZKP, and more." />
+    <meta property="og:title" content="sanandmv — developer" />
+    <meta property="og:description" content="Software developer and tech enthusiast. Projects, links, and interests." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://sanandmv.dev" />
+    <meta name="theme-color" content="#00ff00" />
     <style>
+      :root { /* default (dark) theme */
+        --bg: #000000;
+        --fg: #00ff00;
+        --muted: #12b012;
+        --glow: 0 0 10px var(--fg);
+        --panel: rgba(0, 0, 0, 0.5);
+        --link: var(--fg);
+      }
+      .theme-light {
+        --bg: #f7fff7;
+        --fg: #074d07;
+        --muted: #0c7c0c;
+        --glow: 0 0 6px var(--fg);
+        --panel: rgba(255, 255, 255, 0.6);
+        --link: #0c7c0c;
+      }
+      html, body { height: 100%; }
       body {
-        background-color: #000;
-        color: #00ff00;
+        background-color: var(--bg);
+        color: var(--fg);
         font-family: "Courier New", monospace;
         line-height: 1.6;
         padding: 20px;
+        overflow-x: hidden;
       }
       .container {
         max-width: 800px;
         margin: 0 auto;
+        position: relative;
+        z-index: 2;
+        background: var(--panel);
+        border: 1px solid rgba(0, 255, 0, 0.15);
+        border-radius: 8px;
+        padding: 20px;
+        backdrop-filter: blur(2px);
       }
       h1 {
-        color: #00ff00;
-        text-shadow: 0 0 10px #00ff00;
+        color: var(--fg);
+        text-shadow: var(--glow);
         animation: flicker 1.5s infinite alternate;
       }
       a {
-        color: #00ff00;
+        color: var(--link);
         text-decoration: none;
       }
       a:hover {
-        text-shadow: 0 0 5px #00ff00;
+        text-shadow: 0 0 5px var(--fg);
       }
       ul {
         list-style-type: none;
@@ -39,10 +70,53 @@
       .section {
         margin-bottom: 20px;
       }
+      .toolbar {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+      .btn {
+        cursor: pointer;
+        color: var(--fg);
+        border: 1px solid rgba(0, 255, 0, 0.3);
+        background: transparent;
+        padding: 6px 10px;
+        border-radius: 6px;
+        transition: transform 0.12s ease, box-shadow 0.2s ease;
+      }
+      .btn:hover { box-shadow: 0 0 6px rgba(0, 255, 0, 0.4); }
+      .btn:active { transform: translateY(1px); }
+
+      /* Matrix canvas */
+      #matrix-canvas {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 1;
+        display: block;
+        pointer-events: none;
+      }
+
+      @keyframes flicker {
+        from { text-shadow: 0 0 4px var(--fg), 0 0 10px var(--fg); opacity: 0.95; }
+        to   { text-shadow: 0 0 8px var(--muted), 0 0 16px var(--fg); opacity: 1; }
+      }
+
+      /* Respect reduced motion */
+      @media (prefers-reduced-motion: reduce) {
+        h1 { animation: none; }
+        #matrix-canvas { display: none; }
+      }
     </style>
   </head>
   <body>
+    <canvas id="matrix-canvas" aria-hidden="true"></canvas>
     <div class="container">
+      <div class="toolbar">
+        <button id="theme-toggle" class="btn" aria-label="Toggle theme">theme: dark</button>
+      </div>
       <h1>&lt;/&gt; sanandmv</h1>
 
       <p>I'm a software developer and tech enthusiast</p>
@@ -85,5 +159,77 @@
         </ul>
       </div>
     </div>
+    <script>
+      (function setupTheme() {
+        try {
+          var saved = localStorage.getItem('theme');
+          if (saved === 'light') document.documentElement.classList.add('theme-light');
+        } catch (e) {}
+        var btn = document.getElementById('theme-toggle');
+        function getMode() {
+          return document.documentElement.classList.contains('theme-light') ? 'light' : 'dark';
+        }
+        function applyLabel() {
+          if (!btn) return;
+          btn.textContent = 'theme: ' + getMode();
+        }
+        function toggle() {
+          document.documentElement.classList.toggle('theme-light');
+          try { localStorage.setItem('theme', getMode()); } catch (e) {}
+          applyLabel();
+        }
+        if (btn) {
+          btn.addEventListener('click', toggle);
+          applyLabel();
+        }
+      })();
+
+      (function matrixRain() {
+        var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prefersReducedMotion) return;
+
+        var canvas = document.getElementById('matrix-canvas');
+        if (!canvas) return;
+        var ctx = canvas.getContext('2d');
+        var characters = 'アァカサタナハマヤャラワ0123456789ABCDEFGHIJKLMNÑOPQRSTUVWXYZｱｶｻﾀﾅﾊﾏﾔﾗﾜﾝ';
+        characters = characters.split('');
+
+        var width, height, columnCount, columnYPositions, fontSize;
+
+        function resize() {
+          width = canvas.width = window.innerWidth;
+          height = canvas.height = window.innerHeight;
+          fontSize = Math.max(14, Math.floor(width / 100));
+          columnCount = Math.floor(width / fontSize);
+          columnYPositions = new Array(columnCount).fill(0);
+        }
+
+        function drawFrame() {
+          ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--bg');
+          ctx.fillStyle += 'E6'; // add slight alpha trail overlay
+          ctx.fillRect(0, 0, width, height);
+
+          ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--fg');
+          ctx.font = fontSize + 'px "Courier New", monospace';
+
+          for (var i = 0; i < columnCount; i++) {
+            var text = characters[Math.floor(Math.random() * characters.length)];
+            var x = i * fontSize;
+            var y = columnYPositions[i] * fontSize;
+            ctx.fillText(text, x, y);
+            if (y > height && Math.random() > 0.975) {
+              columnYPositions[i] = 0;
+            } else {
+              columnYPositions[i]++;
+            }
+          }
+          requestAnimationFrame(drawFrame);
+        }
+
+        resize();
+        window.addEventListener('resize', resize);
+        requestAnimationFrame(drawFrame);
+      })();
+    </script>
   </body>
 </html>
