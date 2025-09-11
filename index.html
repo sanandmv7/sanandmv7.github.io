@@ -18,6 +18,12 @@
         --glow: 0 0 10px var(--fg);
         --panel: rgba(0, 0, 0, 0.5);
         --link: var(--fg);
+        /* Fluid type scale */
+        --step--1: clamp(0.78rem, 0.72rem + 0.30vw, 0.90rem);
+        --step-0: clamp(0.94rem, 0.86rem + 0.40vw, 1.05rem);
+        --step-1: clamp(1.13rem, 1.02rem + 0.60vw, 1.30rem);
+        --step-2: clamp(1.35rem, 1.19rem + 0.90vw, 1.60rem);
+        --step-3: clamp(1.62rem, 1.39rem + 1.20vw, 1.95rem);
       }
       .theme-light {
         --bg: #f7fff7;
@@ -32,6 +38,7 @@
         background-color: var(--bg);
         color: var(--fg);
         font-family: "Courier New", monospace;
+        font-size: var(--step-0);
         line-height: 1.6;
         padding: 20px;
         overflow-x: hidden;
@@ -50,6 +57,7 @@
       h1 {
         color: var(--fg);
         text-shadow: var(--glow);
+        font-size: var(--step-3);
         animation: flicker 1.5s infinite alternate;
       }
       a {
@@ -73,7 +81,7 @@
         overflow-x: auto;
         overflow-y: hidden;
         font-family: "Courier New", monospace;
-        font-size: 10px;
+        font-size: clamp(8px, 1.4vw, 12px);
         line-height: 1;
       }
       ul {
@@ -99,6 +107,7 @@
         justify-content: space-between;
         gap: 16px;
         margin-bottom: 6px;
+        flex-wrap: wrap;
       }
       .main-nav ul {
         list-style: none;
@@ -107,6 +116,7 @@
         display: flex;
         align-items: center;
         gap: 14px;
+        flex-wrap: wrap;
       }
       .main-nav a {
         color: var(--fg);
@@ -157,6 +167,7 @@
       }
       .btn:hover { box-shadow: 0 0 6px rgba(0, 255, 0, 0.4); }
       .btn:active { transform: translateY(1px); }
+      .menu-toggle { display: none; }
 
       /* Matrix canvas */
       #matrix-canvas {
@@ -179,6 +190,35 @@
         h1 { animation: none; }
         #matrix-canvas { display: none; }
       }
+      /* Responsive layout */
+      @media (max-width: 900px) {
+        .container { max-width: 92vw; padding: 16px; }
+        body { padding: 14px; }
+        .toolbar { justify-content: space-between; }
+      }
+
+      @media (max-width: 640px) {
+        .container { padding: 12px; }
+        .header { gap: 10px; }
+        .menu-toggle { display: inline-flex; align-items: center; gap: 6px; }
+        .main-nav { display: none; width: 100%; }
+        .main-nav.is-open { display: block; }
+        .main-nav ul { gap: 10px; flex-direction: column; align-items: flex-start; }
+        .btn { padding: 6px 8px; }
+        .icon { font-size: 20px; }
+        /* Make dropdowns non-absolute on mobile */
+        .main-nav .dropdown-menu { position: static; min-width: 0; box-shadow: none; padding: 4px 0; }
+        .main-nav .dropdown:hover .dropdown-menu { display: none; }
+        .main-nav .dropdown.is-open .dropdown-menu { display: flex; }
+      }
+
+      /* Improve dropdown usability on touch: allow tap to open */
+      @media (hover: none) and (pointer: coarse) {
+        .main-nav .dropdown:focus-within .dropdown-menu,
+        .main-nav .dropdown:active .dropdown-menu {
+          display: flex;
+        }
+      }
     </style>
   </head>
   <body>
@@ -189,7 +229,10 @@
       </div>
       <div class="header">
         <h1>&lt;/&gt;sanandmv</h1>
-        <nav class="main-nav" aria-label="Primary">
+        <button id="menu-toggle" class="btn menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="primary-nav">
+          ☰ menu
+        </button>
+        <nav id="primary-nav" class="main-nav" aria-label="Primary">
           <ul>
             <li class="nav-item dropdown">
               <a href="#" aria-haspopup="true" aria-expanded="false">projects</a>
@@ -338,6 +381,49 @@
         resize();
         window.addEventListener('resize', resize);
         requestAnimationFrame(drawFrame);
+      })();
+
+      (function mobileNav() {
+        var toggleBtn = document.getElementById('menu-toggle');
+        var nav = document.getElementById('primary-nav');
+        if (!toggleBtn || !nav) return;
+        function closeNav() {
+          nav.classList.remove('is-open');
+          toggleBtn.setAttribute('aria-expanded', 'false');
+          toggleBtn.setAttribute('aria-label', 'Open menu');
+        }
+        function openNav() {
+          nav.classList.add('is-open');
+          toggleBtn.setAttribute('aria-expanded', 'true');
+          toggleBtn.setAttribute('aria-label', 'Close menu');
+        }
+        function toggleNav() {
+          if (nav.classList.contains('is-open')) closeNav(); else openNav();
+        }
+        toggleBtn.addEventListener('click', toggleNav);
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape') closeNav();
+        });
+        document.addEventListener('click', function(e) {
+          if (!nav.classList.contains('is-open')) return;
+          if (e.target === toggleBtn) return;
+          if (nav.contains(e.target)) return;
+          closeNav();
+        });
+
+        // Mobile dropdown toggling (tap to expand)
+        var dropdowns = nav.querySelectorAll('.dropdown > a');
+        dropdowns.forEach(function(anchor) {
+          anchor.addEventListener('click', function(e) {
+            var li = anchor.parentElement;
+            if (window.matchMedia('(max-width: 640px)').matches) {
+              e.preventDefault();
+              li.classList.toggle('is-open');
+              var expanded = li.classList.contains('is-open');
+              anchor.setAttribute('aria-expanded', String(expanded));
+            }
+          });
+        });
       })();
     </script>
   </body>
