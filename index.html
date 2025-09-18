@@ -118,6 +118,10 @@
         gap: 14px;
         flex-wrap: wrap;
       }
+      .main-nav .dropdown-menu ul,
+      .main-nav .dropdown-menu {
+        padding-left: 0 !important;
+      }
       .main-nav a {
         color: var(--fg);
         padding: 0;
@@ -136,25 +140,45 @@
         background: var(--panel);
         border: 1px solid rgba(0, 255, 0, 0.2);
         border-radius: 6px;
-        padding: 8px;
+        padding: 0;
         display: none;
         flex-direction: column;
-        gap: 6px;
+        gap: 0;
         min-width: 180px;
         box-shadow: 0 0 10px rgba(0,255,0,0.15);
         z-index: 5;
+        text-align: left;
+        margin-left: 0;
+        padding-left: 0;
+        align-items: flex-start;
       }
-      .main-nav .dropdown:hover .dropdown-menu,
-      .main-nav .dropdown:focus-within .dropdown-menu {
+      .main-nav .dropdown-menu ul { margin: 0; padding-left: 0; }
+      .main-nav .dropdown-menu li { margin: 0; padding: 0; }
+      /* Nested submenu (opens to the right) */
+      .main-nav .dropdown-menu .dropdown { position: relative; }
+      .main-nav .dropdown-menu .dropdown > .dropdown-menu {
+        top: 0;
+        right: auto;
+        left: calc(100% + 6px);
+        min-width: max-content;
+      }
+      .main-nav .dropdown-menu .dropdown:hover > .dropdown-menu { display: flex; }
+      .main-nav .dropdown:hover > .dropdown-menu {
+        display: flex;
+      }
+      /* Allow click-toggled open state */
+      .main-nav .dropdown.is-open > .dropdown-menu {
         display: flex;
       }
       .main-nav .dropdown-menu a {
         width: 100%;
         display: block;
-        padding: 2px 0;
+        padding: 6px 10px;
+        margin-left: 0;
         text-decoration: underline;
         border: none;
         background: transparent;
+        white-space: nowrap;
       }
       .btn {
         cursor: pointer;
@@ -207,9 +231,12 @@
         .btn { padding: 6px 8px; }
         .icon { font-size: 20px; }
         /* Make dropdowns non-absolute on mobile */
-        .main-nav .dropdown-menu { position: static; min-width: 0; box-shadow: none; padding: 4px 0; }
+        .main-nav .dropdown-menu { position: static; min-width: 0; box-shadow: none; padding: 0; }
         .main-nav .dropdown:hover .dropdown-menu { display: none; }
         .main-nav .dropdown.is-open .dropdown-menu { display: flex; }
+        /* Nested submenu stacks vertically on mobile */
+        .main-nav .dropdown-menu .dropdown > .dropdown-menu { left: 0; min-width: 0; }
+        .main-nav .dropdown-menu a { white-space: normal; }
       }
 
       /* Improve dropdown usability on touch: allow tap to open */
@@ -237,6 +264,15 @@
             <li class="nav-item dropdown">
               <a href="#" aria-haspopup="true" aria-expanded="false">projects</a>
               <ul class="dropdown-menu" role="menu">
+                <li class="dropdown">
+                  <a href="#" aria-haspopup="true" aria-expanded="false">Hackathons ▸</a>
+                  <ul class="dropdown-menu" role="menu" aria-label="Hackathons">
+                    <li><a href="https://ethglobal.com/showcase/proofoffunds-zczod" role="menuitem">ETHGlobal Cannes</a></li>
+                    <li><a href="https://ethglobal.com/showcase/zkbounty-wzafn" role="menuitem">ETHGlobal Trifecta</a></li>
+                    <li><a href="https://ethglobal.com/showcase/zucitizens-registry-vi8xn" role="menuitem">ETHGlobal Bangkok</a></li>
+                    <li><a href="https://ethglobal.com/showcase/cryptotask-vdcq5" role="menuitem">ETHGlobal Singapore</a></li>
+                  </ul>
+                </li>
                 <li><a href="https://github.com/projectmatris/antimalwareapp" role="menuitem">LibreAV</a></li>
                 <li><a href="https://github.com/sanandmv7/Indialore" role="menuitem">Indialore</a></li>
               </ul>
@@ -383,7 +419,7 @@
         requestAnimationFrame(drawFrame);
       })();
 
-      (function mobileNav() {
+      (function navInteractions() {
         var toggleBtn = document.getElementById('menu-toggle');
         var nav = document.getElementById('primary-nav');
         if (!toggleBtn || !nav) return;
@@ -411,16 +447,25 @@
           closeNav();
         });
 
-        // Mobile dropdown toggling (tap to expand)
-        var dropdowns = nav.querySelectorAll('.dropdown > a');
-        dropdowns.forEach(function(anchor) {
+        // Click to toggle dropdowns on all screen sizes
+        var dropdownTriggers = nav.querySelectorAll('.dropdown > a');
+        dropdownTriggers.forEach(function(anchor) {
           anchor.addEventListener('click', function(e) {
+            e.preventDefault();
             var li = anchor.parentElement;
-            if (window.matchMedia('(max-width: 640px)').matches) {
-              e.preventDefault();
-              li.classList.toggle('is-open');
-              var expanded = li.classList.contains('is-open');
-              anchor.setAttribute('aria-expanded', String(expanded));
+            var isOpen = li.classList.toggle('is-open');
+            anchor.setAttribute('aria-expanded', String(isOpen));
+          });
+        });
+
+        // Close other open dropdowns when clicking elsewhere
+        document.addEventListener('click', function(e) {
+          var openDropdowns = nav.querySelectorAll('.dropdown.is-open');
+          openDropdowns.forEach(function(li) {
+            var trigger = li.querySelector(':scope > a');
+            if (!li.contains(e.target)) {
+              li.classList.remove('is-open');
+              if (trigger) trigger.setAttribute('aria-expanded', 'false');
             }
           });
         });
