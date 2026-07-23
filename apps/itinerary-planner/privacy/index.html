@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Privacy Policy — Itinerary Planner · sanandmv</title>
+    <meta name="description" content="Privacy policy for the Itinerary Planner app by Pixelarry." />
+    <meta property="og:title" content="Privacy Policy — Itinerary Planner" />
+    <meta property="og:description" content="Privacy policy for the Itinerary Planner app by Pixelarry." />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#00ff00" />
+    <style>
+      :root {
+        --bg: #000000;
+        --fg: #00ff00;
+        --muted: #12b012;
+        --glow: 0 0 10px var(--fg);
+        --panel: rgba(0, 0, 0, 0.5);
+        --link: var(--fg);
+        --step--1: clamp(0.78rem, 0.72rem + 0.30vw, 0.90rem);
+        --step-0: clamp(0.94rem, 0.86rem + 0.40vw, 1.05rem);
+        --step-1: clamp(1.13rem, 1.02rem + 0.60vw, 1.30rem);
+        --step-2: clamp(1.35rem, 1.19rem + 0.90vw, 1.60rem);
+        --step-3: clamp(1.62rem, 1.39rem + 1.20vw, 1.95rem);
+      }
+      .theme-light {
+        --bg: #f7fff7;
+        --fg: #074d07;
+        --muted: #0c7c0c;
+        --glow: 0 0 6px var(--fg);
+        --panel: rgba(255, 255, 255, 0.6);
+        --link: #0c7c0c;
+      }
+      html, body { height: 100%; }
+      body {
+        background-color: var(--bg);
+        color: var(--fg);
+        font-family: "Courier New", monospace;
+        font-size: var(--step-0);
+        line-height: 1.6;
+        padding: 20px;
+        overflow-x: hidden;
+        margin: 0;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 2;
+        background: var(--panel);
+        border: 1px solid rgba(0, 255, 0, 0.15);
+        border-radius: 8px;
+        padding: 20px;
+        backdrop-filter: blur(2px);
+      }
+      h1 {
+        color: var(--fg);
+        text-shadow: var(--glow);
+        font-size: var(--step-3);
+        animation: flicker 1.5s infinite alternate;
+        margin-top: 0;
+      }
+      h2 {
+        color: var(--fg);
+        font-size: var(--step-1);
+        margin-top: 1.5em;
+        margin-bottom: 0.5em;
+        text-shadow: var(--glow);
+      }
+      p {
+        color: var(--muted);
+        margin: 0.5em 0;
+      }
+      a {
+        color: var(--link);
+        text-decoration: none;
+      }
+      a:hover {
+        text-shadow: 0 0 5px var(--fg);
+      }
+      .toolbar {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 6px;
+        flex-wrap: wrap;
+      }
+      .btn {
+        cursor: pointer;
+        color: var(--fg);
+        border: 1px solid rgba(0, 255, 0, 0.3);
+        background: transparent;
+        padding: 6px 10px;
+        border-radius: 6px;
+        transition: transform 0.12s ease, box-shadow 0.2s ease;
+      }
+      .btn:hover { box-shadow: 0 0 6px rgba(0, 255, 0, 0.4); }
+      .btn:active { transform: translateY(1px); }
+      .back-link {
+        display: inline-block;
+        margin-bottom: 16px;
+        font-size: var(--step--1);
+      }
+      .back-link::before {
+        content: "← ";
+      }
+      .last-updated {
+        font-size: var(--step--1);
+        color: var(--muted);
+        margin-bottom: 20px;
+      }
+      .section {
+        margin-bottom: 20px;
+        border-bottom: 1px solid rgba(0, 255, 0, 0.1);
+        padding-bottom: 16px;
+      }
+      .section:last-child {
+        border-bottom: none;
+      }
+      .footer {
+        margin-top: 30px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(0, 255, 0, 0.15);
+        font-size: var(--step--1);
+        color: var(--muted);
+        text-align: center;
+      }
+      #matrix-canvas {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 1;
+        display: block;
+        pointer-events: none;
+      }
+      @keyframes flicker {
+        from { text-shadow: 0 0 4px var(--fg), 0 0 10px var(--fg); opacity: 0.95; }
+        to   { text-shadow: 0 0 8px var(--muted), 0 0 16px var(--fg); opacity: 1; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        h1 { animation: none; }
+        #matrix-canvas { display: none; }
+      }
+      @media (max-width: 900px) {
+        .container { max-width: 92vw; padding: 16px; }
+        body { padding: 14px; }
+      }
+      @media (max-width: 640px) {
+        .container { padding: 12px; }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="matrix-canvas" aria-hidden="true"></canvas>
+    <div class="container">
+      <div class="toolbar">
+        <button id="theme-toggle" class="btn" aria-label="Toggle theme">theme: dark</button>
+      </div>
+      <div class="header">
+        <h1>Privacy Policy</h1>
+        <a href="/" class="btn">home</a>
+      </div>
+
+      <a href="/" class="back-link">Back to Home</a>
+
+      <p class="last-updated">Last updated: April 29, 2026</p>
+
+      <h1 style="font-size: var(--step-2);">Itinerary Planner</h1>
+
+      <div class="section">
+        <h2>Introduction</h2>
+        <p>
+          This privacy policy applies to the Itinerary Planner app (hereby referred to as
+          "Application") for mobile devices that was created by Pixelarry (hereby referred to
+          as "Service Provider") as a Free service. This service is intended for use "AS IS".
+        </p>
+      </div>
+
+      <div class="section">
+        <h2>Information We Collect</h2>
+        <p>
+          The Application does not obtain any information when you download and use it.
+          Registration is not required to use the Application.
+        </p>
+      </div>
+
+      <div class="section">
+        <h2>Does the Application collect precise real time location information of the device?</h2>
+        <p>
+          This Application does not collect precise information about the location of your
+          mobile device.
+        </p>
+      </div>
+
+      <div class="section">
+        <h2>Sharing Your Information</h2>
+        <p>
+          Since the Application does not collect any information, no data is shared with third
+          parties.
+        </p>
+      </div>
+
+      <div class="section">
+        <h2>Data Security</h2>
+        <p>
+          The Service Provider is concerned about safeguarding the confidentiality of your
+          information. However, since the Application does not collect any information, there
+          is no risk of your data being accessed by unauthorized individuals.
+        </p>
+      </div>
+
+      <div class="section">
+        <h2>Your Rights and Choices</h2>
+        <p>
+          You can stop all collection of information by the Application easily by uninstalling
+          it. You may use the standard uninstall processes as may be available as part of your
+          mobile device or via the mobile application marketplace or network.
+        </p>
+      </div>
+
+      <div class="section">
+        <h2>Children's Privacy</h2>
+        <p>The Application is not used to knowingly solicit data from or market to children under the age of 13.</p>
+        <p>
+          The Service Provider does not knowingly collect personally identifiable information
+          from children. The Service Provider encourages all children to never submit any
+          personally identifiable information through the Application and/or Services. The
+          Service Provider encourages parents and legal guardians to monitor their
+          children's Internet usage and to help enforce this Policy by instructing their
+          children never to provide personally identifiable information through the Application
+          and/or Services without their permission. If you have reason to believe that a child
+          has provided personally identifiable information to the Service Provider through the
+          Application and/or Services, please contact the Service Provider so that they will
+          be able to take the necessary actions. You must also be at least 16 years of age to
+          consent to the processing of your personally identifiable information in your country
+          (in some countries we may allow your parent or guardian to do so on your behalf).
+        </p>
+      </div>
+
+      <div class="section">
+        <h2>Changes to This Privacy Policy</h2>
+        <p>
+          This Privacy Policy may be updated from time to time for any reason. The Service
+          Provider will notify you of any changes to their Privacy Policy by updating this page
+          with the new Privacy Policy. You are advised to consult this Privacy Policy regularly
+          for any changes, as continued use is deemed approval of all changes.
+        </p>
+        <p>This privacy policy is effective as of 2025-04-25.</p>
+      </div>
+
+      <div class="section">
+        <h2>Your Consent</h2>
+        <p>
+          By using the Application, you are consenting to the processing of your information
+          as set forth in this Privacy Policy now and as amended by the Service Provider.
+        </p>
+      </div>
+
+      <div class="section">
+        <h2>Contact Us</h2>
+        <p>
+          If you have any questions regarding privacy while using the Application, or have
+          questions about the practices, please contact the Service Provider via the following
+          form:
+          <a href="https://forms.gle/vBf7bBhzBEFJ66RR9" target="_blank" rel="noopener noreferrer">
+            https://forms.gle/vBf7bBhzBEFJ66RR9
+          </a>
+        </p>
+      </div>
+
+      <div class="footer">
+        <p>© 2025 Pixelarry. All rights reserved.</p>
+      </div>
+    </div>
+
+    <script>
+      (function setupTheme() {
+        try {
+          var saved = localStorage.getItem('theme');
+          if (saved === 'light') document.documentElement.classList.add('theme-light');
+        } catch (e) {}
+        var btn = document.getElementById('theme-toggle');
+        function getMode() {
+          return document.documentElement.classList.contains('theme-light') ? 'light' : 'dark';
+        }
+        function applyLabel() {
+          if (!btn) return;
+          btn.textContent = 'theme: ' + getMode();
+        }
+        function toggle() {
+          document.documentElement.classList.toggle('theme-light');
+          try { localStorage.setItem('theme', getMode()); } catch (e) {}
+          applyLabel();
+        }
+        if (btn) {
+          btn.addEventListener('click', toggle);
+          applyLabel();
+        }
+      })();
+
+      (function matrixRain() {
+        var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prefersReducedMotion) return;
+
+        var canvas = document.getElementById('matrix-canvas');
+        if (!canvas) return;
+        var ctx = canvas.getContext('2d');
+        var characters = 'アァカサタナハマヤャラワ0123456789ABCDEFGHIJKLMNÑOPQRSTUVWXYZｱｶｻﾀﾅﾊﾏﾔﾗﾜﾝ';
+        characters = characters.split('');
+
+        var width, height, columnCount, columnYPositions, fontSize;
+
+        function resize() {
+          width = canvas.width = window.innerWidth;
+          height = canvas.height = window.innerHeight;
+          fontSize = Math.max(14, Math.floor(width / 100));
+          columnCount = Math.floor(width / fontSize);
+          columnYPositions = new Array(columnCount).fill(0);
+        }
+
+        function drawFrame() {
+          ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--bg');
+          ctx.fillStyle += 'E6';
+          ctx.fillRect(0, 0, width, height);
+
+          ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--fg');
+          ctx.font = fontSize + 'px "Courier New", monospace';
+
+          for (var i = 0; i < columnCount; i++) {
+            var text = characters[Math.floor(Math.random() * characters.length)];
+            var x = i * fontSize;
+            var y = columnYPositions[i] * fontSize;
+            ctx.fillText(text, x, y);
+            if (y > height && Math.random() > 0.975) {
+              columnYPositions[i] = 0;
+            } else {
+              columnYPositions[i]++;
+            }
+          }
+          requestAnimationFrame(drawFrame);
+        }
+
+        resize();
+        window.addEventListener('resize', resize);
+        requestAnimationFrame(drawFrame);
+      })();
+    </script>
+  </body>
+</html>
