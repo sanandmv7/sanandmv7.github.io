@@ -246,6 +246,35 @@
           display: flex;
         }
       }
+
+      /* Featured banner */
+      .featured-banner {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 14px;
+        padding: 10px 14px;
+        border: 1px solid var(--fg);
+        border-radius: 6px;
+        background: rgba(0, 255, 0, 0.05);
+        box-shadow: 0 0 8px rgba(0, 255, 0, 0.2);
+        flex-wrap: wrap;
+      }
+      .featured-label {
+        font-weight: bold;
+        font-size: var(--step--1);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        white-space: nowrap;
+      }
+      .featured-link {
+        text-decoration: underline;
+        font-size: var(--step-0);
+        text-shadow: 0 0 4px var(--fg);
+      }
+      .featured-link:hover {
+        text-shadow: 0 0 10px var(--fg), 0 0 20px var(--fg);
+      }
     </style>
   </head>
   <body>
@@ -308,8 +337,9 @@
         </nav>
       </div>
 
-      <div class="section" style="margin-top: 12px;">
-        <p>📬 <a href="https://refer.tldr.tech/27a4b837/" target="_blank" rel="noopener noreferrer">TLDR Newsletter</a> — daily tech news digest I recommend</p>
+      <div class="featured-banner">
+        <span class="featured-label">★ recommended</span>
+        <a href="https://refer.tldr.tech/27a4b837/" target="_blank" rel="noopener noreferrer" class="featured-link">TLDR Newsletter — free daily tech news for developers →</a>
       </div>
 
       <pre class="hero-ascii" role="img" aria-label="ASCII display image">
